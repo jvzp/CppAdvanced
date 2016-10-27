@@ -1,0 +1,31 @@
+class BaseItr
+{
+  public:
+    class iterator : public std::iterator<std::input_iterator_tag, int>
+    {
+      public:
+        iterator() : _in(NULL) {}
+        inline iterator(const iterator& org) : _in(org._in) {}
+        inline iterator& operator=(const iterator& other) { _in = other._in; return *this; }
+        virtual inline int operator * () { return _in->operator*(); }
+        virtual inline iterator& operator++() { (*_in)++; return *this; }
+        virtual inline iterator& operator++(int unused) { (*_in)++; return *this; }
+        virtual inline bool operator==(const iterator& other) 
+        {
+          return *(*_in) == *(*(other._in));
+        }
+        virtual inline bool operator!=(const iterator& other)
+        {
+          return *(*_in) != *(*(other._in));
+        }
+        // would use shared pointer insted of this
+        //~iterator() { if(_in) { delete _in; } }
+        static inline iterator New(iterator *in) { return iterator(in); }
+      private:
+        iterator(iterator *in) : _in(in) {}
+        iterator *_in;
+    };
+
+    virtual iterator begin() = 0;
+    virtual iterator end() = 0;
+};
